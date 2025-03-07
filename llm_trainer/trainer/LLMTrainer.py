@@ -2,7 +2,6 @@ import csv
 import os
 import time
 import math
-from typing import Optional
 
 import torch
 import tiktoken
@@ -56,8 +55,7 @@ class LLMTrainer:
 
     def _configure_optimizer(self, weight_decay, learning_rate, model):
         # Start with all of the candidate parameters (that require grad)
-        param_dict = {pn: p for pn, p in model.named_parameters()}
-        param_dict = {pn: p for pn, p in param_dict.items() if p.requires_grad}
+        param_dict = {pn: p for pn, p in model.named_parameters() if p.requires_grad}
 
         # Any parameters that is 2D will be weight decayed, otherwise no.
         decay_params = [p for n, p in param_dict.items() if p.dim() >= 2]
@@ -67,7 +65,7 @@ class LLMTrainer:
             {'params': nodecay_params, 'weight_decay': 0.0}
         ]
         # Create AdamW optimizer (fused version requires CUDA)
-        use_fused = True if self.device == self.device else False
+        use_fused = self.device == self.device
         optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=(0.9, 0.95), eps=1e-5, fused=use_fused)
         return optimizer
 
@@ -79,7 +77,7 @@ class LLMTrainer:
               MINI_BATCH_SIZE: int = 16,
               context_window: int = 128,
               data_dir: str = "data",
-              logging_file: Optional[str] = "logs_training.csv",
+              logging_file: str = "logs_training.csv",
               save_dir: str = "checkpoints") -> None:
         """
         Train the model with the specified parameters.
@@ -99,7 +97,7 @@ class LLMTrainer:
                 The context window size for the data loader. Defaults to 128.
             data_dir (str, optional):
                 The directory containing the training data. Defaults to "data".
-            logging_file (Optional[str], optional):
+            logging_file (str, optional):
                 The file path for logging training metrics. Defaults to "logs_training.csv".
             save_dir (str, optional):
                 The directory to save model checkpoints. Defaults to "checkpoints".
@@ -116,7 +114,7 @@ class LLMTrainer:
         self.model.train()
         self.model.to(self.device)
 
-        if logging_file is not None and not os.path.exists(logging_file):
+        if not os.path.exists(logging_file):
             # Create a file for training logs and add header to it
             with open(logging_file, mode="w", newline="", encoding="utf8") as file:
                 writer = csv.writer(file)

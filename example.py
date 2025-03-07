@@ -11,8 +11,8 @@ if __name__ == "__main__":
     create_dataset(save_dir="data", HF_path="HuggingFaceFW/fineweb-edu", HF_name="sample-10BT", CHUNKS_LIMIT=10)
 
     # Step 2: Define any LLM model (xLSTM in this example)
-    cfg = OmegaConf.load("xlstm_config.yaml")
-    cfg = from_dict(data_class=xLSTMLMModelConfig, data=OmegaConf.to_container(cfg), config=DaciteConfig(strict=True))
+    conf = OmegaConf.load("xlstm_config.yaml")
+    cfg = from_dict(data_class=xLSTMLMModelConfig, data=OmegaConf.to_container(conf), config=DaciteConfig(strict=True))
     xLSTM = xLSTMLMModel(cfg)
 
     # Step 3: Create an LLMTrainer object
@@ -23,13 +23,13 @@ if __name__ == "__main__":
                       )
 
     # Step 4: Start training
-    trainer.train(max_steps=500,
-                  verbose=10,                       # Sample from the model each 50 steps
+    trainer.train(max_steps=1_000,
+                  verbose=100,                      # Sample from the model each 50 steps
                   context_window=128,               # Context window of the model
                   data_dir="data",                  # Directory with .npy files containing tokens
                   BATCH_SIZE=256,                   # Batch size
                   MINI_BATCH_SIZE=16,               # Gradient accumulation is used. BATCH_SIZE = MINI_BATCH_SIZE * accumulation_steps
                   logging_file="logs_training.csv", # File to write logs of the training
-                  save_each_n_steps=100,            # Save the state each 100 steps
+                  save_each_n_steps=500,            # Save the state each 100 steps
                   save_dir="checkpoints"            # Directory where to save training state (model + optimizer + datalader)
     )

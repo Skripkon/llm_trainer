@@ -55,7 +55,7 @@ You must specify only the `model`. The other attributes are optional and will be
 | `MINI_BATCH_SIZE`   | `int` | The mini-batch size for gradient accumulation | **16** |
 | `context_window`    | `int` | The context window size for the data loader | **128** |
 | `data_dir`         | `str` | The directory containing the training data | **"data"** |
-| `logging_file`      | `Optional[str]` | The file path for logging training metrics | **"logs_training.csv"** |
+| `logging_file`      | `Union[str, None]` | The file path for logging training metrics | **"logs_training.csv"** |
 | `save_dir`         | `str` | The directory to save model checkpoints | **"checkpoints"** |
 
 

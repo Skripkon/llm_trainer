@@ -1,10 +1,10 @@
-# LLM Trainer in 5 lines of code
+# `llm_trainer` in 5 Lines of Code
 
 ```python
-from llm_trainer import create_dataset, Trainer
+from llm_trainer import create_dataset, LLMTrainer
 
-create_dataset(save_dir="data") # Create default dataset (FineWeb)
-model = ...                     # Define your model
-trainer = Trainer(model=model)  # use default parameters
-trainer.train()                 # use created dataset
+create_dataset(save_dir="data")   # Generate the default FineWeb dataset
+model = ...                       # Define or load your model
+trainer = LLMTrainer(model)       # Initialize trainer with default settings
+trainer.train()                   # Start training on the dataset
 ```

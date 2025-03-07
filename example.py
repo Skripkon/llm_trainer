@@ -10,7 +10,7 @@ if __name__ == "__main__":
     # Step 1: Create a default dataset
     create_dataset(save_dir="data", HF_path="HuggingFaceFW/fineweb-edu", HF_name="sample-10BT", CHUNKS_LIMIT=10)
 
-    # Step 2: Define any LLM model (xLSTM in this example)
+    # Step 2: Define any LLM model (xLSTM in this example -- https://github.com/NX-AI/xlstm)
     conf = OmegaConf.load("xlstm_config.yaml")
     cfg = from_dict(data_class=xLSTMLMModelConfig, data=OmegaConf.to_container(conf), config=DaciteConfig(strict=True))
     xLSTM = xLSTMLMModel(cfg)

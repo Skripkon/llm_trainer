@@ -1,0 +1,19 @@
+# Heavy data
+data/fineweb/*
+
+# bytecode files
+__pycache__
+
+# Model configuration
+xlstm_config.yaml
+
+# Saved Models
+checkpoints
+
+# Logs
+logs_training.csv
+
+# Dev files
+.pylintrc
+for_developers.txt
+setup.py

@@ -78,7 +78,7 @@ class LLMTrainer:
               BATCH_SIZE: int = 256,
               MINI_BATCH_SIZE: int = 16,
               context_window: int = 128,
-              data_dir: str = "data/fineweb",
+              data_dir: str = "data",
               logging_file: Optional[str] = "logs_training.csv",
               save_dir: str = "checkpoints") -> None:
         """
@@ -98,7 +98,7 @@ class LLMTrainer:
             context_window (int, optional):
                 The context window size for the data loader. Defaults to 128.
             data_dir (str, optional):
-                The directory containing the training data. Defaults to "data/fineweb".
+                The directory containing the training data. Defaults to "data".
             logging_file (Optional[str], optional):
                 The file path for logging training metrics. Defaults to "logs_training.csv".
             save_dir (str, optional):

@@ -1,5 +1,5 @@
 # Heavy data
-data/fineweb/*
+data
 
 # bytecode files
 __pycache__

@@ -35,17 +35,17 @@ You can use **ANY** LLM that expects a tensor `X` with shape `(batch_size, conte
 ### `LLMTrainer` Attributes
 
 ```python
-model:     torch.nn.Module = None,
-optimizer: torch.optim.Optimizer = None,
-scheduler: torch.optim.lr_scheduler.LRScheduler = None,
-tokenizer: tiktoken.Encoding = None
+model:     torch.nn.Module = None,                      # The neural network model to train  
+optimizer: torch.optim.Optimizer = None,                # Optimizer responsible for updating model weights  
+scheduler: torch.optim.lr_scheduler.LRScheduler = None, # Learning rate scheduler for dynamic adjustment
+tokenizer: tiktoken.Encoding = None                     # Tokenizer for generating text (used if verbose > 0 during training)
 ```
 
 You must specify only the `model`. The other attributes are optional and will be set to default values if not specified.
 
 ### `LLMTrainer` Parameters
 
-| Parameter            | Type               | Description | Default value
+| Parameter            | Type               | Description                                                       | Default value           |
 |----------------------|--------------------|-------------------------------------------------------------------|-------------------------|
 | `max_steps`          | `int`              | The maximum number of training steps                              | **5,000**               |
 | `verbose`            | `int`              | The interval of steps at which to generate and print text samples | **200**                 |
@@ -56,7 +56,6 @@ You must specify only the `model`. The other attributes are optional and will be
 | `data_dir`           | `str`              | The directory containing the training data                        | **"data"**              |
 | `logging_file`       | `Union[str, None]` | The file path for logging training metrics                        | **"logs_training.csv"** |
 | `save_dir`           | `str`              | The directory to save model checkpoints                           | **"checkpoints"**       |
-
 
 
 Every parameter has a default value, so you can start training simply by calling `LLMTrainer.train()`.

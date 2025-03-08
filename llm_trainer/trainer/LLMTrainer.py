@@ -71,13 +71,14 @@ class LLMTrainer:
 
     def train(self,
               max_steps: int = 5_000,
-              verbose: int = 200,
               save_each_n_steps: int = 1000,
               BATCH_SIZE: int = 256,
               MINI_BATCH_SIZE: int = 16,
               context_window: int = 128,
               data_dir: str = "data",
               logging_file: str = "logs_training.csv",
+              verbose: int = 200,
+              prompt: str = "Once upon a time",
               save_dir: str = "checkpoints") -> None:
         """
         Train the model with the specified parameters.
@@ -85,8 +86,6 @@ class LLMTrainer:
         Parameters:
             max_steps (int, optional):
                 The maximum number of training steps. Defaults to 5,000.
-            verbose (int, optional):
-                The interval of steps at which to generate and print text samples. Defaults to 200.
             save_each_n_steps (int, optional):
                 The interval of steps at which to save model checkpoints. Defaults to 1,000.
             BATCH_SIZE (int, optional):
@@ -99,6 +98,10 @@ class LLMTrainer:
                 The directory containing the training data. Defaults to "data".
             logging_file (str, optional):
                 The file path for logging training metrics. Defaults to "logs_training.csv".
+            verbose (int, optional):
+                The interval of steps at which to generate and print text samples. Defaults to 200.
+            prompt (str, optional):
+                Beginning of the sentence that the model will continue (during generation). Defaults to "Once upon a time".
             save_dir (str, optional):
                 The directory to save model checkpoints. Defaults to "checkpoints".
         """
@@ -151,7 +154,7 @@ class LLMTrainer:
 
             # Sample from the model
             if ((step > 0 and step % verbose == 0) or last_step):
-                self._generate_text()
+                self._generate_text(prompt=prompt)
 
             # Save the model (checkpoint)
             if last_step or ((step > 0) and ((step % save_each_n_steps) == 0)):
@@ -172,7 +175,7 @@ class LLMTrainer:
             print(f"step: {step} | Loss: {loss_accum:.6f} | norm: {norm:.4f} | lr: {self.scheduler.get_last_lr()[0]:.4e} | dt: {dt:.2f}s | tok/sec: {tokens_per_sec:.2f}")
 
 
-    def _generate_text(self, n_return_sequences: int = 4, length: int = 32, prompt: str = "I'm Nikolay from Russia and") -> None:
+    def _generate_text(self, prompt: str, n_return_sequences: int = 4, length: int = 32) -> None:
         """
         Samples from the model and prints `n_return_sequences` continuation of the `prompt`.
         """

@@ -45,17 +45,17 @@ You must specify only the `model`. The other attributes are optional and will be
 
 ### `LLMTrainer` Parameters
 
-| Parameter            | Type           | Description | Default value
-|----------------------|---------------|-------------|---------------|
-| `max_steps`         | `int` | The maximum number of training steps | **5,000** |
-| `verbose`           | `int` | The interval of steps at which to generate and print text samples | **200** |
-| `save_each_n_steps` | `int` | The interval of steps at which to save model checkpoints | **1,000** |
-| `BATCH_SIZE`        | `int` | The total batch size for training | **256** |
-| `MINI_BATCH_SIZE`   | `int` | The mini-batch size for gradient accumulation | **16** |
-| `context_window`    | `int` | The context window size for the data loader | **128** |
-| `data_dir`         | `str` | The directory containing the training data | **"data"** |
-| `logging_file`      | `Union[str, None]` | The file path for logging training metrics | **"logs_training.csv"** |
-| `save_dir`         | `str` | The directory to save model checkpoints | **"checkpoints"** |
+| Parameter            | Type               | Description | Default value
+|----------------------|--------------------|-------------------------------------------------------------------|-------------------------|
+| `max_steps`          | `int`              | The maximum number of training steps                              | **5,000**               |
+| `verbose`            | `int`              | The interval of steps at which to generate and print text samples | **200**                 |
+| `save_each_n_steps`  | `int`              | The interval of steps at which to save model checkpoints          | **1,000**               |
+| `BATCH_SIZE`         | `int`              | The total batch size for training                                 | **256**                 |
+| `MINI_BATCH_SIZE`    | `int`              | The mini-batch size for gradient accumulation                     | **16**                  |
+| `context_window`     | `int`              | The context window size for the data loader                       | **128**                 |
+| `data_dir`           | `str`              | The directory containing the training data                        | **"data"**              |
+| `logging_file`       | `Union[str, None]` | The file path for logging training metrics                        | **"logs_training.csv"** |
+| `save_dir`           | `str`              | The directory to save model checkpoints                           | **"checkpoints"**       |
 
 
 

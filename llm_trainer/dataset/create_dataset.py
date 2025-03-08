@@ -1,12 +1,13 @@
 import os
+from typing import Literal
+
 import numpy as np
 import tiktoken
 from datasets import load_dataset
 from tqdm import tqdm
 
 def create_dataset(save_dir: str = "data",
-                   HF_path: str = "HuggingFaceFW/fineweb-edu",
-                   HF_name: str = "sample-10BT",
+                   dataset: str = Literal["fineweb-edu-10B"],
                    CHUNKS_LIMIT: int = 1_500,
                    CHUNK_SIZE=int(1e6)):
     """
@@ -14,8 +15,7 @@ def create_dataset(save_dir: str = "data",
     
     Parameters:
         save_dir (str): Directory where tokenized chunks will be saved.
-        HF_path (str): Hugging Face dataset repository path.
-        HF_name (str): Name of the dataset split.
+        dataset (str): Dataset to create. Supported datasets: ["fineweb-edu-10B"]
         CHUNKS_LIMIT (int): Maximum number of chunks to store.
         CHUNK_SIZE (int): Number of tokens per chunk.
     """
@@ -24,7 +24,7 @@ def create_dataset(save_dir: str = "data",
     os.makedirs(save_dir, exist_ok=True)
 
     # Load dataset with streaming enabled to avoid high memory usage
-    dataset = load_dataset(path=HF_path, name=HF_name, split="train", streaming=True)
+    dataset = load_dataset(path="HuggingFaceFW/fineweb-edu", name="sample-10BT", split="train", streaming=True)
     
     # Initialize tokenizer (GPT-2 encoding)
     tokenizer = tiktoken.get_encoding("gpt2")

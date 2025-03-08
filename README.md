@@ -13,21 +13,20 @@ trainer.train(data_dir="data")    # Start training on the dataset
 
 1. Find a text corpus.
 2. Tokenize the text.
-3. Save the tokens as `.npy` files in a single folder (`your_data_dir`). You can save them as one file or multiple files.
+3. Save the tokens as `.npy` files in a single folder (`your_data_directory`). You can save them as one file or multiple files.
 
    **Note:** The `.npy` format is the result of using `np.save(filename, tokens)`.
 
-This process is handled by `llm_trainer.create_dataset()`, which currently supports only datasets from Hugging Face:
+This process is handled by `llm_trainer.create_dataset()`, which currently supports only one dataset from Hugging Face:
 
 ```python
-def create_dataset(save_dir:     str = "data",
-                   HF_path:      str = "HuggingFaceFW/fineweb-edu",
-                   HF_name:      str = "sample-10BT",
-                   CHUNKS_LIMIT: int = 1_500,    # Number of chunks (files) to create
-                   CHUNK_SIZE:   int = int(1e6)) # Tokens per chunk (file)
+def create_dataset(save_dir: str = "data",    # where to save created dataset
+                   dataset: str = Literal["fineweb-edu-10B"],
+                   CHUNKS_LIMIT: int = 1_500, # maximum number of files (chunks) with tokens to create
+                   CHUNK_SIZE=int(1e6))       # number of tokens per chunk
 ```
 
-4. Pass the data directory path to `LLMTrainer.train(data_dir="your_data_dir")`.
+4. Pass the data directory path to `LLMTrainer.train(data_dir="your_data_directory")`.
 
 # Which Models Are Valid?
 
@@ -39,7 +38,7 @@ You can use **ANY** LLM that expects a tensor `X` with shape `(batch_size, conte
 model:     torch.nn.Module = None,
 optimizer: torch.optim.Optimizer = None,
 scheduler: torch.optim.lr_scheduler.LRScheduler = None,
-tokenizer: Encoding = None
+tokenizer: tiktoken.Encoding = None
 ```
 
 You must specify only the `model`. The other attributes are optional and will be set to default values if not specified.

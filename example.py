@@ -8,7 +8,7 @@ from llm_trainer import LLMTrainer, create_dataset
 if __name__ == "__main__":
     
     # Step 1: Create a default dataset
-    create_dataset(save_dir="data", HF_path="HuggingFaceFW/fineweb-edu", HF_name="sample-10BT", CHUNKS_LIMIT=10)
+    create_dataset(save_dir="data", dataset="fineweb-edu-10B", CHUNKS_LIMIT=100, CHUNK_SIZE=int(1e6))
 
     # Step 2: Define any LLM model (xLSTM in this example -- https://github.com/NX-AI/xlstm)
     conf = OmegaConf.load("xlstm_config.yaml")

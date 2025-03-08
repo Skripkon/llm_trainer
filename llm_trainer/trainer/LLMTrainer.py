@@ -20,7 +20,7 @@ class LLMTrainer:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
         if optimizer is None:
-            optimizer = self._configure_optimizer(weight_decay=0.1, learning_rate=6e-4, model=model)
+            optimizer = self._configure_optimizer(weight_decay=0.1, learning_rate=5e-3, model=model)
         self.optimizer = optimizer
 
         if scheduler is None:
@@ -140,7 +140,7 @@ class LLMTrainer:
                 # Use lower precision for higher bandwidth.
                 # Don't use torch.float16 because it will require gradient rescaling (since float16 represents a limited range)
                 with torch.autocast(device_type=self.device, dtype=torch.bfloat16):
-                    outputs = model(inputs)
+                    outputs = model(inputs).logits
 
                 loss = F.cross_entropy(outputs.view(-1, outputs.size(-1)), targets.view(-1))
                 loss = loss / gradient_accumulation_steps
@@ -190,7 +190,7 @@ class LLMTrainer:
             while generated_tokens.size(1) < length:
 
                 with torch.autocast(device_type=self.device, dtype=torch.bfloat16):
-                    logits = self.model(generated_tokens) # (batch_size, context_window, vocab_size)
+                    logits = self.model(generated_tokens).logits # (batch_size, context_window, vocab_size)
 
                 logits = logits[:, -1, :]  # Get last token logits (B, vocab_size)
                 probs = F.softmax(logits, dim=-1)  # Convert to probabilities

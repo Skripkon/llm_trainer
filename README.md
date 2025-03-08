@@ -31,6 +31,7 @@ def create_dataset(save_dir: str = "data",    # where to save created dataset
 # Which Models Are Valid?
 
 You can use **ANY** LLM that expects a tensor `X` with shape `(batch_size, context_window)` as input during the `.forward()` pass.
+> The output of the forward call must be similar to that of ChatGPT models: `logits = model(X).logits`
 
 ### `LLMTrainer` Attributes
 

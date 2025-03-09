@@ -1,10 +1,6 @@
-<!-- <h1 align="center">
-<img src="https://github.com/Skripkon/llm_trainer/blob/main/assets/llm_trainer_logo.png?raw=true">
-</h1><br> -->
-
 <h1 align="center">
-<img src="assets/llm_trainer_logo.png" style="width: 800">
-</h1><br>
+<img src="https://github.com/Skripkon/llm_trainer/blob/main/assets/llm_trainer_logo.png?raw=true" style="width: 800">
+</h1>
 
 # `llm_trainer` in 5 Lines of Code
 

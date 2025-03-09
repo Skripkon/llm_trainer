@@ -35,7 +35,6 @@ class DataLoader:
             np.random.shuffle(self.chunks)
             self.current_chunk = 0
 
-        print(f"Current chunk: {self.current_chunk}")
         self.tokens = self._load_tokens()
         self.current_position = 0
 

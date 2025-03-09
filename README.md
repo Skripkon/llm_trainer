@@ -16,6 +16,12 @@ trainer.train(data_dir="data")    # Start training on the dataset
 > [!NOTE]
 > Explore a complete example of training GPT-2 in `example_gpt.ipynb`
 
+# Installation
+
+```bash
+pip install llm_trainer
+```
+
 # How to Prepare Data
 
 1. Find a text corpus.

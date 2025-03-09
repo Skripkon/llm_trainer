@@ -8,10 +8,13 @@
 from llm_trainer import create_dataset, LLMTrainer
 
 create_dataset(save_dir="data")   # Generate the default FineWeb dataset
-model = ...                       # Define or load your model
+model = ...                       # Define or load your model (GPT, xLSTM, Mamba...)
 trainer = LLMTrainer(model)       # Initialize trainer with default settings
 trainer.train(data_dir="data")    # Start training on the dataset
 ```
+
+> [!NOTE]
+> Explore a complete example of training GPT-2 in `example_gpt.ipynb`
 
 # How to Prepare Data
 
@@ -35,15 +38,18 @@ def create_dataset(save_dir: str = "data",    # where to save created dataset
 # Which Models Are Valid?
 
 You can use **ANY** LLM that expects a tensor `X` with shape `(batch_size, context_window)` as input during the `.forward()` pass.
+
+> [!WARNING]
 > The output of the forward call must be similar to that of ChatGPT models: `logits = model(X).logits`
 
 ### `LLMTrainer` Attributes
 
 ```python
-model:     torch.nn.Module = None,                      # The neural network model to train  
-optimizer: torch.optim.Optimizer = None,                # Optimizer responsible for updating model weights  
-scheduler: torch.optim.lr_scheduler.LRScheduler = None, # Learning rate scheduler for dynamic adjustment
-tokenizer: tiktoken.Encoding = None                     # Tokenizer for generating text (used if verbose > 0 during training)
+model:        torch.nn.Module = None,                      # The neural network model to train  
+optimizer:    torch.optim.Optimizer = None,                # Optimizer responsible for updating model weights  
+scheduler:    torch.optim.lr_scheduler.LRScheduler = None, # Learning rate scheduler for dynamic adjustment
+tokenizer:    tiktoken.Encoding = None                     # Tokenizer for generating text (used if verbose > 0 during training)
+eos_token_id: int = 50256                                  # End of text token id
 ```
 
 You must specify only the `model`. The other attributes are optional and will be set to default values if not specified.

@@ -93,6 +93,8 @@ class LLMTrainer:
                 The maximum number of training steps.
             save_each_n_steps (int, optional):
                 The interval of steps at which to save model checkpoints.
+            print_logs_each_n_steps(int, optional):
+                The interval of steps at which to print training logs.
             BATCH_SIZE (int, optional):
                 The total batch size for training.
             MINI_BATCH_SIZE (int, optional):

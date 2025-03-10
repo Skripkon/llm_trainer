@@ -43,10 +43,7 @@ def create_dataset(save_dir: str = "data",    # where to save created dataset
 
 # Which Models Are Valid?
 
-You can use **ANY** LLM that expects a tensor `X` with shape `(batch_size, context_window)` as input during the `.forward()` pass.
-
-> [!WARNING]
-> The output of the forward call must be similar to that of ChatGPT models: `logits = model(X).logits`
+You can use **ANY** LLM that expects a tensor `X` with shape `(batch_size, context_window)` as input and returns logits during the forward pass.
 
 ### `LLMTrainer` Attributes
 
@@ -56,24 +53,26 @@ optimizer:    torch.optim.Optimizer = None,                # Optimizer responsib
 scheduler:    torch.optim.lr_scheduler.LRScheduler = None, # Learning rate scheduler for dynamic adjustment
 tokenizer:    tiktoken.Encoding = None                     # Tokenizer for generating text (used if verbose > 0 during training)
 eos_token_id: int = 50256                                  # End of text token id
+model_returns_logits: bool = False                         # Whether model(X) returns logits or an object with an attribute `logits`
 ```
 
 You must specify only the `model`. The other attributes are optional and will be set to default values if not specified.
 
 ### `LLMTrainer` Parameters
 
-| Parameter            | Type               | Description                                                       | Default value           |
-|----------------------|--------------------|-------------------------------------------------------------------|-------------------------|
-| `max_steps`          | `int`              | The maximum number of training steps                              | **5,000**               |
-| `save_each_n_steps`  | `int`              | The interval of steps at which to save model checkpoints          | **1,000**               |
-| `BATCH_SIZE`         | `int`              | The total batch size for training                                 | **256**                 |
-| `MINI_BATCH_SIZE`    | `int`              | The mini-batch size for gradient accumulation                     | **16**                  |
-| `context_window`     | `int`              | The context window size for the data loader                       | **128**                 |
-| `data_dir`           | `str`              | The directory containing the training data                        | **"data"**              |
-| `logging_file`       | `Union[str, None]` | The file path for logging training metrics                        | **"logs_training.csv"** |
-| `verbose`            | `int`              | The interval of steps at which to generate and print text samples | **200**                 |
-| `prompt`             | `str`              | Beginning of the sentence that the model will continue            | **"Once upon a time"**  |
-| `save_dir`           | `str`              | The directory to save model checkpoints                           | **"checkpoints"**       |
+| Parameter                 | Type               | Description                                                       | Default value           |
+|---------------------------|--------------------|-------------------------------------------------------------------|-------------------------|
+| `max_steps`               | `int`              | The maximum number of training steps                              | **5,000**               |
+| `save_each_n_steps`       | `int`              | The interval of steps at which to save model checkpoints          | **1,000**               |
+| `print_logs_each_n_steps` | `int`              | The interval of steps at which to print training logs             | **1**                   |
+| `BATCH_SIZE`              | `int`              | The total batch size for training                                 | **256**                 |
+| `MINI_BATCH_SIZE`         | `int`              | The mini-batch size for gradient accumulation                     | **16**                  |
+| `context_window`          | `int`              | The context window size for the data loader                       | **128**                 |
+| `data_dir`                | `str`              | The directory containing the training data                        | **"data"**              |
+| `logging_file`            | `Union[str, None]` | The file path for logging training metrics                        | **"logs_training.csv"** |
+| `generate_each_n_steps`   | `int`              | The interval of steps at which to generate and print text samples | **200**                 |
+| `prompt`                  | `str`              | Beginning of the sentence that the model will continue            | **"Once upon a time"**  |
+| `save_dir`                | `str`              | The directory to save model checkpoints                           | **"checkpoints"**       |
 
 
 Every parameter has a default value, so you can start training simply by calling `LLMTrainer.train()`.

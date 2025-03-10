@@ -17,7 +17,7 @@ class LLMTrainer:
                  optimizer: torch.optim.Optimizer = None,
                  scheduler: torch.optim.lr_scheduler.LRScheduler = None,
                  tokenizer: Encoding = None,
-                 eos_token_id: int = 50256):
+                 eot_token_id: int = 50256):
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -34,7 +34,7 @@ class LLMTrainer:
             tokenizer = tiktoken.get_encoding("gpt2")
 
         self.tokenizer = tokenizer
-        self.eot: int = eos_token_id  # delimiter between documents
+        self.eot: int = eot_token_id  # delimiter between documents
 
         if model is None:
             raise ValueError("Specify a model.")
@@ -114,9 +114,9 @@ class LLMTrainer:
                 # Use lower precision for higher bandwidth.
                 # Don't use torch.float16 because it will require gradient rescaling (since float16 represents a limited range)
                 with torch.autocast(device_type=self.device, dtype=torch.bfloat16):
-                    outputs = self.model(inputs).logits
+                    logits = self.model(inputs).logits
 
-                loss = F.cross_entropy(outputs.view(-1, outputs.size(-1)), targets.view(-1))
+                loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1))
                 loss = loss / gradient_accumulation_steps
                 loss.backward()
                 loss_accum += loss.detach()
@@ -171,7 +171,7 @@ class LLMTrainer:
                 probs = F.softmax(logits, dim=-1)  # Convert to probabilities
 
                 # Top-k sampling
-                topk_probs, topk_indices = torch.topk(probs, k=50, dim=-1)
+                topk_probs, topk_indices = torch.topk(probs, k=10, dim=-1)
                 sampled_indices = torch.multinomial(topk_probs, 1)  # Shape: (B, 1)
                 next_tokens = torch.gather(topk_indices, -1, sampled_indices)  # (B, 1)
 

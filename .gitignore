@@ -4,9 +4,6 @@ data
 # bytecode files
 __pycache__
 
-# Model configuration
-xlstm_config.yaml
-
 # Saved Models
 checkpoints
 
@@ -17,3 +14,9 @@ logs_training.csv
 .pylintrc
 for_developers.txt
 setup.py
+
+# PyPI package
+build
+dist
+PyPI_README.md
+llm_trainer.egg-info

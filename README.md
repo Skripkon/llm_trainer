@@ -13,8 +13,10 @@ trainer = LLMTrainer(model)       # Initialize trainer with default settings
 trainer.train(data_dir="data")    # Start training on the dataset
 ```
 
+🔴 YouTube Video: [Train LLMs in code, spelled out](https://youtu.be/tFyDICExbHg)
+
 > [!NOTE]
-> Explore a complete example of training GPT-2 in `example_gpt.ipynb`
+> Explore [a complete example](https://github.com/Skripkon/llm_trainer/blob/main/example_gpt.ipynb) of training GPT-2.
 
 # Installation
 

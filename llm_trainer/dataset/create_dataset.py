@@ -12,14 +12,14 @@ def create_dataset(save_dir: str = "data",
                    CHUNK_SIZE=int(1e6)):
     """
     Creates a tokenized dataset from a Hugging Face dataset and stores it in chunks.
-    
+
     Parameters:
         save_dir (str): Directory where tokenized chunks will be saved.
         dataset (str): Dataset to create. Supported datasets: ["fineweb-edu-10B"]
         CHUNKS_LIMIT (int): Maximum number of chunks to store.
         CHUNK_SIZE (int): Number of tokens per chunk.
     """
-    
+
     # Ensure the save directory exists
     os.makedirs(save_dir, exist_ok=True)
 
@@ -51,7 +51,7 @@ def create_dataset(save_dir: str = "data",
     
     # Initialize progress bar
     progress_bar = tqdm(total=CHUNKS_LIMIT, desc="Processing Chunks", unit="chunk")
-    
+
     for tokens in (tokenize(doc) for doc in dataset):
         if chunk_index >= CHUNKS_LIMIT:
             break  # Stop if the chunk limit is reached

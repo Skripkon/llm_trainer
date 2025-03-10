@@ -44,7 +44,7 @@ class DataLoader:
         """
         B, T = self.batch_size, self.context_window
         buf = self.tokens[self.current_position : self.current_position + B * T + 1]
-        inputs = (buf[:-1]).view(B, T)
+        inputs = (buf[0:-1]).view(B, T)
         targets = (buf[1:]).view(B, T)
         self.current_position += B * T
     

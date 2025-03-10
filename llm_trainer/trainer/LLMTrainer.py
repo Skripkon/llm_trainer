@@ -10,14 +10,42 @@ from tiktoken import Encoding
 from torch.nn import functional as F
 
 from llm_trainer.dataset.DataLoader import DataLoader
-
+            
 class LLMTrainer:
     def __init__(self,
                  model: torch.nn.Module = None,
                  optimizer: torch.optim.Optimizer = None,
                  scheduler: torch.optim.lr_scheduler.LRScheduler = None,
                  tokenizer: Encoding = None,
-                 eot_token_id: int = 50256):
+                 eot_token_id: int = 50256,
+                 model_returns_logits: bool = False):
+
+        """
+        Initializes an LLMTrainer instance.
+
+        Parameters:
+            model (torch.nn.Module): 
+                The neural network model to be trained. Must be specified.
+            
+            optimizer (torch.optim.Optimizer, optional): 
+                The optimizer used for training. If not provided, AdamW with weight decay and fused optimization is used.
+            
+            scheduler (torch.optim.lr_scheduler.LRScheduler, optional): 
+                The learning rate scheduler. If not provided, a cosine annealing scheduler with warmup steps is used.
+            
+            tokenizer (tiktoken.Encoding, optional): 
+                The tokenizer used to encode and decode text. Defaults to GPT-2 tokenizer.
+            
+            eot_token_id (int, optional): 
+                The token ID representing the end-of-text token. Defaults to 50256.
+            
+            model_returns_logits (bool, optional): 
+                Whether the model returns raw logits (`logits = model(X)`) or an object containing logits
+                (`logits = model(X).logits`). Defaults to False.
+        
+        Raises:
+            ValueError: If no model is provided.
+        """
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -42,6 +70,8 @@ class LLMTrainer:
 
         self.train_loader = None
         self.current_step: int = 0
+
+        self.model_returns_logits = model_returns_logits
 
     def train(self,
               max_steps: int = 5_000,
@@ -114,7 +144,10 @@ class LLMTrainer:
                 # Use lower precision for higher bandwidth.
                 # Don't use torch.float16 because it will require gradient rescaling (since float16 represents a limited range)
                 with torch.autocast(device_type=self.device, dtype=torch.bfloat16):
-                    logits = self.model(inputs).logits
+                    if self.model_returns_logits:
+                        logits = self.model(inputs)
+                    else:
+                        logits = self.model(inputs).logits
 
                 loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1))
                 loss = loss / gradient_accumulation_steps
@@ -150,12 +183,14 @@ class LLMTrainer:
                 print(f"step: {step} | Loss: {loss_accum:.6f} | norm: {norm:.4f} | lr: {self.scheduler.get_last_lr()[0]:.6e} | dt: {dt:.2f}s | tok/sec: {tokens_per_sec:.2f}")
 
 
-    def _generate_text(self, prompt: str, n_return_sequences: int = 4, length: int = 32) -> None:
+    def _generate_text(self, prompt: str = "Once upon a time", n_return_sequences: int = 4, length: int = 32) -> None:
         """
         Samples from the model and prints `n_return_sequences` continuation of the `prompt`.
         """
+
+        # Make sure the model is on the same device
+        self.model.to(self.device)
         self.model.eval()
-        n_return_sequences = 4
 
         tokens = torch.Tensor(self.tokenizer.encode(prompt)).type(torch.long)
         tokens = tokens.unsqueeze(0).repeat(n_return_sequences, 1)
@@ -165,7 +200,12 @@ class LLMTrainer:
             while generated_tokens.size(1) < length:
 
                 with torch.autocast(device_type=self.device, dtype=torch.bfloat16):
-                    logits = self.model(generated_tokens).logits # (batch_size, context_window, vocab_size)
+                    if self.model_returns_logits:
+                        logits = self.model(generated_tokens)
+                    else:
+                        logits = self.model(generated_tokens).logits
+
+                # logits.shape = (batch_size, context_window, vocab_size)
 
                 logits = logits[:, -1, :]  # Get last token logits (B, vocab_size)
                 probs = F.softmax(logits, dim=-1)  # Convert to probabilities
@@ -195,6 +235,7 @@ class LLMTrainer:
         torch.save(checkpoint, f"checkpoints/cp_{step}.pth")
 
     def load_checkpoint(self, checkpoint_path: str) -> None:
+
         checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
 
         # If the model was saved after running `torch.compile` then the names of its layers were changed.
@@ -204,7 +245,7 @@ class LLMTrainer:
         self.model.load_state_dict(new_state_dict)
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         self.train_loader: DataLoader = checkpoint["train_loader"]
-        print(f"Starting from chunk: {self.train_loader.current_chunk}")
+        # print(f"Starting from chunk: {self.train_loader.current_chunk}")
 
         self.current_step = checkpoint['step']  # Resume from the last step
 

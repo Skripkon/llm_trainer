@@ -17,7 +17,6 @@ class LLMTrainer:
                  optimizer: torch.optim.Optimizer = None,
                  scheduler: torch.optim.lr_scheduler.LRScheduler = None,
                  tokenizer: Encoding = None,
-                 eot_token_id: int = 50256,
                  model_returns_logits: bool = False):
 
         """
@@ -35,9 +34,6 @@ class LLMTrainer:
             
             tokenizer (tiktoken.Encoding, optional): 
                 The tokenizer used to encode and decode text. Defaults to GPT-2 tokenizer.
-            
-            eot_token_id (int, optional): 
-                The token ID representing the end-of-text token. Defaults to 50256.
             
             model_returns_logits (bool, optional): 
                 Whether the model returns raw logits (`logits = model(X)`) or an object containing logits
@@ -62,7 +58,6 @@ class LLMTrainer:
             tokenizer = tiktoken.get_encoding("gpt2")
 
         self.tokenizer = tokenizer
-        self.eot: int = eot_token_id  # delimiter between documents
 
         if model is None:
             raise ValueError("Specify a model.")

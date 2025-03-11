@@ -47,6 +47,10 @@ def create_dataset(save_dir: str = "data",    # where to save created dataset
 
 You can use **ANY** LLM that expects a tensor `X` with shape `(batch_size, context_window)` as input and returns logits during the forward pass.
 
+# How To Start Training?
+
+You need to create an `LLMTrainer` object and call `.train()` on it. Read about its parameters below: 
+
 ### `LLMTrainer` Attributes
 
 ```python
@@ -54,7 +58,6 @@ model:        torch.nn.Module = None,                      # The neural network 
 optimizer:    torch.optim.Optimizer = None,                # Optimizer responsible for updating model weights  
 scheduler:    torch.optim.lr_scheduler.LRScheduler = None, # Learning rate scheduler for dynamic adjustment
 tokenizer:    tiktoken.Encoding = None                     # Tokenizer for generating text (used if verbose > 0 during training)
-eos_token_id: int = 50256                                  # End of text token id
 model_returns_logits: bool = False                         # Whether model(X) returns logits or an object with an attribute `logits`
 ```
 
@@ -78,5 +81,3 @@ You must specify only the `model`. The other attributes are optional and will be
 
 
 Every parameter has a default value, so you can start training simply by calling `LLMTrainer.train()`.
-
-However, it is important to set the correct `context_window` size for your model.

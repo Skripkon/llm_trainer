@@ -84,27 +84,27 @@ class LLMTrainer:
         Train the model with the specified parameters.
         ------
         Parameters:
-            max_steps (int, optional):
+            max_steps (int):
                 The maximum number of training steps.
-            save_each_n_steps (int, optional):
+            save_each_n_steps (int):
                 The interval of steps at which to save model checkpoints.
-            print_logs_each_n_steps(int, optional):
+            print_logs_each_n_steps(int):
                 The interval of steps at which to print training logs.
-            BATCH_SIZE (int, optional):
+            BATCH_SIZE (int):
                 The total batch size for training.
-            MINI_BATCH_SIZE (int, optional):
+            MINI_BATCH_SIZE (int):
                 The mini-batch size for gradient accumulation.
-            context_window (int, optional):
+            context_window (int):
                 The context window size for the data loader.
-            data_dir (str, optional):
+            data_dir (str):
                 The directory containing the training data.
-            logging_file (str, optional):
+            logging_file (str):
                 The file path for logging training metrics.
-            generate_each_n_steps (int, optional):
+            generate_each_n_steps (int):
                 The interval of steps at which to generate and print text samples.
-            prompt (str, optional):
+            prompt (str):
                 Beginning of the sentence that the model will continue (during generation).
-            save_dir (str, optional):
+            save_dir (str):
                 The directory to save model checkpoints.
         """
         

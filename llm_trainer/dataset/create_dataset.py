@@ -17,10 +17,18 @@ def create_dataset(save_dir: str = "data",
     Creates a tokenized dataset from a Hugging Face dataset and stores it in chunks.
 
     Parameters:
-        save_dir (str): Directory where tokenized chunks will be saved.
-        dataset (str): Dataset to create. Supported datasets: ["fineweb-edu-10B"]
-        chunk_limit (int): Maximum number of chunks to store.
-        chunk_size (int): Number of tokens per chunk.
+        save_dir (str):
+            Directory where tokenized chunks will be saved.
+        dataset (str):
+            Dataset to create. Supported datasets: ["fineweb-edu-10B"]
+        chunk_limit(int):
+            Maximum number of chunks to store.
+        chunk_size (int):
+            Number of tokens per chunk.
+        tokenizer (tiktoken.Encoding):
+            Which tokenizer to use to prepare a dataset.
+        end_of_text_token (int):
+            Token id of the end of text token.
     """
 
     # Ensure the save directory exists

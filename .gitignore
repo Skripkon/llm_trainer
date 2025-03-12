@@ -1,23 +1,18 @@
-# Heavy data
-data
-json_files
-
 # bytecode files
 __pycache__
 
-# Saved Models
-checkpoints
 
 # Logs
 logs_training.csv
 
 # Dev files
-.pylintrc
 for_developers.txt
 setup.py
-
-# PyPI package
-build
-dist
 PyPI_README.md
-llm_trainer.egg-info
+release.sh
+
+# Local files
+checkpoints
+data
+json_files
+environment.yml

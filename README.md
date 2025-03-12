@@ -21,7 +21,7 @@ trainer.train(data_dir="data")    # Start training on the dataset
 # Installation
 
 ```bash
-pip install llm-trainer
+$ pip install llm-trainer
 ```
 
 # How to Prepare Data
@@ -81,3 +81,15 @@ You must specify only the `model`. The other attributes are optional and will be
 
 
 Every parameter has a default value, so you can start training simply by calling `LLMTrainer.train()`.
+
+# To contribute
+
+1. Fork the repository.
+2. Make changes.
+3. Apply linter.
+```
+$ pip install pylint==3.3.5
+$ pylint $(git ls-files '*.py')
+```
+4. Commit and push your changes.
+5. Create a pull request from your fork to the main repository.

@@ -5,9 +5,9 @@ import math
 
 import torch
 from torch.optim.lr_scheduler import LRScheduler
+from torch.nn import functional as F
 import tiktoken
 from tiktoken import Encoding
-from torch.nn import functional as F
 
 from llm_trainer.dataset.DataLoader import DataLoader
             

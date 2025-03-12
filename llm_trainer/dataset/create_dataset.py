@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 def create_dataset(save_dir: str = "data",
                    dataset: str = Literal["fineweb-edu-10B"],
-                   chunk_limit: int = 1_500,
+                   chunks_limit: int = 1_500,
                    chunk_size=int(1e6),
                    tokenizer: tiktoken.Encoding = tiktoken.get_encoding("gpt2"),
                    end_of_text_token: int = 50256) -> None:
@@ -21,7 +21,7 @@ def create_dataset(save_dir: str = "data",
             Directory where tokenized chunks will be saved.
         dataset (str):
             Dataset to create. Supported datasets: ["fineweb-edu-10B"]
-        chunk_limit(int):
+        chunks_limit(int):
             Maximum number of chunks to store.
         chunk_size (int):
             Number of tokens per chunk.
@@ -57,10 +57,10 @@ def create_dataset(save_dir: str = "data",
     n_chunk_tokens: int = 0  # Track current number of tokens in chunk
     
     # Initialize progress bar
-    progress_bar = tqdm(total=chunk_limit, desc="Processing Chunks", unit="chunk")
+    progress_bar = tqdm(total=chunks_limit, desc="Processing Chunks", unit="chunk")
 
     for tokens in (tokenize(doc) for doc in dataset):
-        if chunk_index >= chunk_limit:
+        if chunk_index >= chunks_limit:
             break  # Stop if the chunk limit is reached
         
         if n_chunk_tokens + len(tokens) < chunk_size:
@@ -88,7 +88,7 @@ def create_dataset(save_dir: str = "data",
 
 def create_dataset_from_json(save_dir: str = "data",
                              json_dir: str = "json_files",
-                             chunk_limit: int = 1_500,
+                             chunks_limit: int = 1_500,
                              chunk_size=int(1e6),
                              tokenizer: tiktoken.Encoding = tiktoken.get_encoding("gpt2"),
                              eot_token: int = 50256) -> None:
@@ -110,7 +110,7 @@ def create_dataset_from_json(save_dir: str = "data",
             Directory where tokenized chunks will be saved.
         json_dir (str):
             Directory containing JSON files with documents.
-        chunk_limit (int):
+        chunks_limit (int):
             Maximum number of chunks to store.
         chunk_size (int):
             Number of tokens per chunk.
@@ -128,7 +128,7 @@ def create_dataset_from_json(save_dir: str = "data",
     chunk_index: int = 0  # Track number of saved chunks
     n_chunk_tokens: int = 0  # Track current number of tokens in chunk
 
-    progress_bar = tqdm(total=chunk_limit, desc="Processing Chunks", unit="chunk")
+    progress_bar = tqdm(total=chunks_limit, desc="Processing Chunks", unit="chunk")
     
     for json_file in json_files:
         json_path = os.path.join(json_dir, json_file)
@@ -144,7 +144,7 @@ def create_dataset_from_json(save_dir: str = "data",
                     continue  # Skip if 'text' field is missing
                 
                 tokens = np.concatenate((tokenizer.encode_ordinary(doc["text"]), [eot_token])).astype(np.uint16)
-                if chunk_index >= chunk_limit:
+                if chunk_index >= chunks_limit:
                     progress_bar.close()
                     return None
 
@@ -159,7 +159,7 @@ def create_dataset_from_json(save_dir: str = "data",
                     chunk_index += 1
                     progress_bar.update(1)
                     
-                    if chunk_index >= chunk_limit:
+                    if chunk_index >= chunks_limit:
                         progress_bar.close()
                         return None
                     

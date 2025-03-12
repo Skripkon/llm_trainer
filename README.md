@@ -25,23 +25,45 @@ $ pip install llm-trainer
 ```
 
 # How to Prepare Data
-
-1. Find a text corpus.
-2. Tokenize the text.
-3. Save the tokens as `.npy` files in a single folder (`your_data_directory`). You can save them as one file or multiple files.
-
-   **Note:** The `.npy` format is the result of using `np.save(filename, tokens)`.
-
-This process is handled by `llm_trainer.create_dataset()`, which currently supports only one dataset from Hugging Face:
+ 
+## Option 1: Use the Default FineWeb Dataset  
 
 ```python
-def create_dataset(save_dir: str = "data",    # where to save created dataset
-                   dataset: str = Literal["fineweb-edu-10B"],
-                   CHUNKS_LIMIT: int = 1_500, # maximum number of files (chunks) with tokens to create
-                   CHUNK_SIZE=int(1e6))       # number of tokens per chunk
+from llm_trainer import create_dataset
+
+def create_dataset(save_dir: str = "data",    # Where to save created dataset
+                   chunks_limit: int = 1_500, # Maximum number of files (chunks) with tokens to create
+                   chunk_size=int(1e6),       # Number of tokens per chunk
+                   tokenizer: tiktoken.Encoding = tiktoken.get_encoding("gpt2"),
+                   eot_token: int = 50256)     
 ```
 
-4. Pass the data directory path to `LLMTrainer.train(data_dir="your_data_directory")`.
+## Option 2: Use your own data
+
+1. Your dataset should be structured as a JSON array, where each entry contains a "text" field.
+You can store your data in one or multiple JSON files.
+
+Example JSON file:
+```
+[
+   {"text": "Learn about LLMs: https://www.youtube.com/@_NickTech"},
+   {"text": "Open-source python library to train LLMs: https://github.com/Skripkon/llm_trainer."},
+   {"text": "My name is Nikolay Skripko. Hello from Russia (2025)."}
+]
+```
+
+2. Run the following code to convert your JSON files into a tokenized dataset:
+
+```python
+from llm_trainer import create_dataset_from_json
+
+def create_dataset_from_json(save_dir: str = "data",  # Where to save created dataset
+                   json_dir: str = "json_files",      # Path to your JSON files
+                   chunks_limit: int = 1_500,         # Maximum number of files (chunks) with tokens to create
+                   chunk_size=int(1e6),       # Number of tokens per chunk
+                   tokenizer: tiktoken.Encoding = tiktoken.get_encoding("gpt2"),
+                   eot_token: int = 50256)     
+```
 
 # Which Models Are Valid?
 

@@ -262,8 +262,8 @@ class LLMTrainer:
             {'params': nodecay_params, 'weight_decay': 0.0}
         ]
 
-        # Create AdamW optimizer (fused version requires CUDA)
-        use_fused = self.device == self.device
+        # Create AdamW optimizer (fused version requires CUDA + runs only on Linux)
+        use_fused = (self.device == self.device) and (sys.platform in ("linux", "linux2"))
         optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=(0.9, 0.95), eps=1e-5, fused=use_fused)
         return optimizer
 

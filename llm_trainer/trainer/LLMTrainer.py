@@ -45,6 +45,10 @@ class LLMTrainer:
         """
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        if self.device == "cuda":
+            print(f"Training on device: CUDA, {torch.cuda.get_device_name()}")
+        else:
+            print("Training on device: CPU")
 
         if optimizer is None:
             optimizer = self._configure_optimizer(weight_decay=0.1, learning_rate=5e-3, model=model)

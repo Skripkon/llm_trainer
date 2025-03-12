@@ -16,12 +16,12 @@ trainer.train(data_dir="data")    # Start training on the dataset
 🔴 YouTube Video: [Train LLMs in code, spelled out](https://youtu.be/tFyDICExbHg)
 
 > [!NOTE]
-> Explore [a complete example](https://github.com/Skripkon/llm_trainer/blob/main/example_gpt.ipynb) of training GPT-2.
+> Explore [usage examples](https://github.com/Skripkon/llm_trainer/blob/main/examples)
 
 # Installation
 
 ```bash
-pip install llm_trainer
+pip install llm-trainer
 ```
 
 # How to Prepare Data

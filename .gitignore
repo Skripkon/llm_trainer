@@ -1,5 +1,6 @@
 # Heavy data
 data
+json_files
 
 # bytecode files
 __pycache__

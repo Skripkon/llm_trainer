@@ -2,6 +2,7 @@ import csv
 import os
 import time
 import math
+import sys
 
 import torch
 from torch.optim.lr_scheduler import LRScheduler
@@ -124,7 +125,10 @@ class LLMTrainer:
         
         self.model.train()
         self.model.to(self.device)
-        self.model = torch.compile(self.model)
+
+        # torch.compile requires Triton (https://github.com/triton-lang/triton), which is supported only on Linux
+        if sys.platform in ("linux", "linux2"):
+            self.model = torch.compile(self.model)
 
         for step in range(self.current_step, max_steps):
             t0 = time.time()

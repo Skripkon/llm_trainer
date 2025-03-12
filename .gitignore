@@ -1,7 +1,6 @@
 # bytecode files
 __pycache__
 
-
 # Logs
 logs_training.csv
 

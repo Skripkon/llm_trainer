@@ -76,13 +76,13 @@ def create_dataset_from_json(save_dir: str = "data",  # Where to save created da
 
 # Which Models Are Valid?
 
-You can use **ANY** LLM that expects a tensor `X` with shape `(batch_size, context_window)` as input and returns logits during the forward pass.
+You can train **ANY** LLM that expects a tensor `X` with shape `(batch_size, context_window)` as input and returns logits during the forward pass.
 
 # How To Start Training?
 
 You need to create an `LLMTrainer` object and call `.train()` on it. Read about its parameters below: 
 
-### `LLMTrainer` Attributes
+### `LLMTrainer()` parameters
 
 ```python
 model:        torch.nn.Module = None,                      # The neural network model to train  
@@ -94,7 +94,7 @@ model_returns_logits: bool = False                         # Whether model(X) re
 
 You must specify only the `model`. The other attributes are optional and will be set to default values if not specified.
 
-### `LLMTrainer` Parameters
+### `LLMTrainer.train()` Parameters
 
 | Parameter                 | Type               | Description                                                       | Default value           |
 |---------------------------|--------------------|-------------------------------------------------------------------|-------------------------|

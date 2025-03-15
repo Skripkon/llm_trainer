@@ -84,7 +84,8 @@ class LLMTrainer:
               logging_file: str = "logs_training.csv",
               generate_each_n_steps: int = 250,
               prompt: str = "Once upon a time",
-              save_dir: str = "checkpoints") -> None:
+              save_dir: str = "checkpoints",
+              overwrite_logging_file: bool = True) -> None:
         """
         Train the model with the specified parameters.
         ------
@@ -111,6 +112,9 @@ class LLMTrainer:
                 Beginning of the sentence that the model will continue (during generation).
             save_dir (str):
                 The directory to save model checkpoints.
+            overwrite_logging_file (bool):
+                If logging file should be overwritten in case it exists. True by default,
+                set to False if you continue training.
         """
         
         # Make sure that a directory for checkpoints exists
@@ -119,7 +123,7 @@ class LLMTrainer:
         if self.train_loader is None:
             self.train_loader = DataLoader(batch_size=MINI_BATCH_SIZE, context_window=context_window, data_dir=data_dir)
 
-        if not os.path.exists(logging_file):
+        if overwrite_logging_file or not os.path.exists(logging_file):
             # Create a file for training logs and add header to it
             with open(logging_file, mode="w", newline="", encoding="utf8") as file:
                 writer = csv.writer(file)
@@ -130,7 +134,7 @@ class LLMTrainer:
         self.model.train()
         self.model.to(self.device)
 
-        # torch.compile requires Triton (https://github.com/triton-lang/triton), which is supported only on Linux
+        # torch.compile requires Triton (https://github.com/triton-lang/triton), which is only supported on Linux.
         if sys.platform in ("linux", "linux2"):
             self.model = torch.compile(self.model)
 
@@ -164,15 +168,6 @@ class LLMTrainer:
             self.optimizer.step()
             self.scheduler.step()
 
-            # Sample from the model
-            if ((step > 0 and step % generate_each_n_steps == 0) or last_step):
-                self._generate_text(prompt=prompt)
-                self.model.train()  # during generation model is set to .eval() mode
-
-            # Save the model (checkpoint)
-            if last_step or ((step > 0) and ((step % save_each_n_steps) == 0)):
-                self._save_checkpoint(step, self.train_loader)
-
             # LOGGING
             t1 = time.time()
             dt = t1 - t0  # time elapsed in seconds
@@ -186,6 +181,15 @@ class LLMTrainer:
 
             if step % print_logs_each_n_steps == 0:
                 print(f"step: {step} | Loss: {loss_accum:.6f} | norm: {norm:.4f} | lr: {self.scheduler.get_last_lr()[0]:.6e} | dt: {dt:.2f}s | tok/sec: {tokens_per_sec:.2f}")
+
+            # Sample from the model
+            if ((step > 0 and step % generate_each_n_steps == 0) or last_step):
+                self._generate_text(prompt=prompt)
+                self.model.train()  # during generation model is set to .eval() mode
+
+            # Save the model (checkpoint)
+            if last_step or ((step > 0) and ((step % save_each_n_steps) == 0)):
+                self._save_checkpoint(step, self.train_loader)
 
 
     def _generate_text(self, prompt: str = "Once upon a time", n_return_sequences: int = 4, length: int = 32) -> None:

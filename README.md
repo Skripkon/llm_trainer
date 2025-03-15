@@ -40,11 +40,9 @@ $ pip install llm-trainer
 ```python
 from llm_trainer import create_dataset
 
-def create_dataset(save_dir: str = "data",    # Where to save created dataset
-                   chunks_limit: int = 1_500, # Maximum number of files (chunks) with tokens to create
-                   chunk_size=int(1e6),       # Number of tokens per chunk
-                   tokenizer: tiktoken.Encoding = tiktoken.get_encoding("gpt2"),
-                   eot_token: int = 50256)     
+create_dataset(save_dir="data",         # Where to save created dataset
+               chunks_limit=1_500,      # Maximum number of files (chunks) with tokens to create
+               chunk_size=int(1e6))     # Number of tokens per chunk
 ```
 
 ## Option 2: Use your own data
@@ -66,12 +64,10 @@ Example JSON file:
 ```python
 from llm_trainer import create_dataset_from_json
 
-def create_dataset_from_json(save_dir: str = "data",  # Where to save created dataset
-                   json_dir: str = "json_files",      # Path to your JSON files
-                   chunks_limit: int = 1_500,         # Maximum number of files (chunks) with tokens to create
-                   chunk_size=int(1e6),       # Number of tokens per chunk
-                   tokenizer: tiktoken.Encoding = tiktoken.get_encoding("gpt2"),
-                   eot_token: int = 50256)     
+create_dataset_from_json(save_dir="data",        # Where to save created dataset
+                         json_dir="json_files",  # Path to your JSON files
+                         chunks_limit = 1_500,   # Maximum number of files (chunks) with tokens to create
+                         chunk_size=int(1e6))    # Number of tokens per chunk 
 ```
 
 # Which Models Are Valid?

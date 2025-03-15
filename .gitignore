@@ -15,3 +15,8 @@ checkpoints
 data
 json_files
 environment.yml
+
+# Env
+.venv
+venv
+.env

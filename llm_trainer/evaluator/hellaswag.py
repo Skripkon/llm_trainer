@@ -20,7 +20,7 @@ DATA_CACHE_DIR = os.path.join(os.path.dirname(__file__), "hellaswag")
 
 def download_file(url: str, fname: str, chunk_size=1024):
     """Helper function to download a file from a given url"""
-    resp = requests.get(url, stream=True)
+    resp = requests.get(url, stream=True, timeout=10)
     total = int(resp.headers.get("content-length", 0))
     with open(fname, "wb") as file, tqdm(
         desc=fname,
@@ -28,10 +28,10 @@ def download_file(url: str, fname: str, chunk_size=1024):
         unit="iB",
         unit_scale=True,
         unit_divisor=1024,
-    ) as bar:
+    ) as progress_bar:
         for data in resp.iter_content(chunk_size=chunk_size):
             size = file.write(data)
-            bar.update(size)
+            progress_bar.update(size)
 
 hellaswags = {
     "train": "https://raw.githubusercontent.com/rowanz/hellaswag/master/data/hellaswag_train.jsonl",
@@ -92,7 +92,7 @@ def render_example(example):
 def iterate_examples(split):
     # there are 10,042 examples in total in val
     download(split)
-    with open(os.path.join(DATA_CACHE_DIR, f"hellaswag_{split}.jsonl"), "r") as f:
+    with open(os.path.join(DATA_CACHE_DIR, f"hellaswag_{split}.jsonl"), "r", encoding="utf8") as f:
         for line in f:
             example = json.loads(line)
             yield example
@@ -108,7 +108,7 @@ def evaluate_hellaswag(model):
     num_total = 0
 
     for example in iterate_examples("val"):
-        data, tokens, mask, label = render_example(example)
+        _, tokens, mask, label = render_example(example)
         tokens = tokens.to(device)
         mask = mask.to(device)
 

@@ -9,6 +9,9 @@
     <a href="https://github.com/Skripkon/PokerBots/blob/main/LICENSE" target="_blank">
         <img src="https://raw.githubusercontent.com/Skripkon/PokerBots/27bba4cc02db1a785a9c6623f807f7e138ebbbf7/PokerBots/images/MIT_license.svg" height="30" alt="MIT License">
     </a>
+    <a href="https://pypi.org/project/llm-trainer/" target="_blank">
+        <img src="https://img.shields.io/pypi/v/llm-trainer" height="30" alt="PyPI">
+    </a>
 </div>
 
 # `llm_trainer` in 5 Lines of Code

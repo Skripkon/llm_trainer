@@ -9,6 +9,8 @@ from torch.optim.lr_scheduler import LRScheduler
 from torch.nn import functional as F
 import tiktoken
 from tiktoken import Encoding
+import pandas as pd
+import matplotlib.pyplot as plt
 
 from llm_trainer.dataset.DataLoader import DataLoader
             
@@ -274,6 +276,25 @@ class LLMTrainer:
         use_fused = (self.device == self.device) and (sys.platform in {"linux", "linux2"})
         optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=(0.9, 0.95), eps=1e-5, fused=use_fused)
         return optimizer
+
+    def plot_loss(self, logging_file: str = "logs_training.csv", smoothing_window: int = 10):
+
+        data = pd.read_csv(logging_file)
+        smoothed_loss = data["Loss"].rolling(window=smoothing_window).mean()
+
+        plt.plot(data["Step"], smoothed_loss, label="Smoothed Loss", color="pink")
+        plt.plot(data["Step"], data["Loss"], alpha=0.5, label="Original Loss", color="gray")
+
+        plt.axhline(y=6, color='r', linestyle='--', alpha=0.6)
+        plt.axhline(y=5, color='gray', linestyle='--', alpha=0.6)
+        plt.axhline(y=4, color='y', linestyle='--', alpha=0.6)
+        plt.axhline(y=3, color='g', linestyle='--', alpha=0.6)
+
+        plt.xlabel("Step")
+        plt.ylabel("Loss")
+        plt.legend()
+        plt.show()
+
 
 class CosineAnnealingWithWarmUpStepsScheduler(LRScheduler):
     """

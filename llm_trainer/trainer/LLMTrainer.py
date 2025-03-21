@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from transformers import PreTrainedTokenizer, AutoTokenizer
 
 from llm_trainer.dataset.DataLoader import DataLoader
-            
+
 class LLMTrainer:
     def __init__(self,
                  model: torch.nn.Module = None,
@@ -206,7 +206,7 @@ class LLMTrainer:
         self.model.eval()
 
         tokens = self.tokenizer.encode(prompt, return_tensors="pt").type(torch.long)
-        tokens = tokens.unsqueeze(0).repeat(n_return_sequences, 1)
+        tokens = tokens.repeat(n_return_sequences, 1)
 
         generated_tokens = tokens.to(self.device)
         with torch.no_grad():
@@ -234,7 +234,7 @@ class LLMTrainer:
         # print the generated text
         for i in range(n_return_sequences):
             tokens = generated_tokens[i, :length].tolist()
-            decoded = self.tokenizer.decode(tokens=tokens)
+            decoded = self.tokenizer.decode(tokens)
             print(f"=== sample {i} ===\n{decoded}")
 
     def _save_checkpoint(self, step: int, train_loader: DataLoader) -> None:

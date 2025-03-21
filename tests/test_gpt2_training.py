@@ -1,6 +1,7 @@
 from transformers import GPT2LMHeadModel, GPT2Config
 
-from llm_trainer import create_dataset, LLMTrainer
+from llm_trainer import create_dataset 
+from llm_trainer import LLMTrainer
 
 def test_gpt2_training():
 

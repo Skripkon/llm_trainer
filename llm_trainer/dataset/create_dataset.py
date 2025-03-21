@@ -52,7 +52,7 @@ def create_dataset(save_dir: str = "data",
         """
         if doc["language"] != "en":
             return []
-        return np.concatenate((tokenizer.encode(doc["text"]), [end_of_text_token])).astype(np.uint16)
+        return np.concatenate((tokenizer.encode(doc["text"], max_length=int(1e9), truncation=True), [end_of_text_token])).astype(np.uint16)
     
     # Allocate space for chunk storage
     chunk_tokens: np.ndarray = np.empty((chunk_size,), dtype=np.uint16)
@@ -146,7 +146,7 @@ def create_dataset_from_json(save_dir: str = "data",
                 if "text" not in doc:
                     continue  # Skip if 'text' field is missing
                 
-                tokens = np.concatenate((tokenizer.encode(doc["text"]), [eot_token])).astype(np.uint16)
+                tokens = np.concatenate((tokenizer.encode(doc["text"], max_length=int(1e9), truncation=True), [eot_token])).astype(np.uint16)
                 if chunk_index >= chunks_limit:
                     progress_bar.close()
                     return None

@@ -7,10 +7,9 @@ import sys
 import torch
 from torch.optim.lr_scheduler import LRScheduler
 from torch.nn import functional as F
-import tiktoken
-from tiktoken import Encoding
 import pandas as pd
 import matplotlib.pyplot as plt
+from transformers import PreTrainedTokenizer, AutoTokenizer
 
 from llm_trainer.dataset.DataLoader import DataLoader
             
@@ -19,7 +18,7 @@ class LLMTrainer:
                  model: torch.nn.Module = None,
                  optimizer: torch.optim.Optimizer = None,
                  scheduler: torch.optim.lr_scheduler.LRScheduler = None,
-                 tokenizer: Encoding = None,
+                 tokenizer: PreTrainedTokenizer | AutoTokenizer = None,
                  model_returns_logits: bool = False):
 
         """
@@ -35,7 +34,7 @@ class LLMTrainer:
             scheduler (torch.optim.lr_scheduler.LRScheduler, optional): 
                 The learning rate scheduler. If not provided, a cosine annealing scheduler with warmup steps is used.
             
-            tokenizer (tiktoken.Encoding, optional): 
+            tokenizer (transformers.PreTrainedTokenizer, optional): 
                 The tokenizer used to encode and decode text. Defaults to GPT-2 tokenizer.
             
             model_returns_logits (bool, optional): 
@@ -62,7 +61,7 @@ class LLMTrainer:
         self.scheduler = scheduler
 
         if tokenizer is None:
-            tokenizer = tiktoken.get_encoding("gpt2")
+            tokenizer = AutoTokenizer.from_pretrained("gpt2")
 
         self.tokenizer = tokenizer
 
@@ -118,7 +117,10 @@ class LLMTrainer:
                 If logging file should be overwritten in case it exists. True by default,
                 set to False if you continue training.
         """
-        
+
+        # Sets the internal precision of float32 matrix multiplications.
+        torch.set_float32_matmul_precision('high')
+
         # Make sure that a directory for checkpoints exists
         os.makedirs(name=save_dir, exist_ok=True)
 
@@ -203,7 +205,7 @@ class LLMTrainer:
         self.model.to(self.device)
         self.model.eval()
 
-        tokens = torch.Tensor(self.tokenizer.encode(prompt)).type(torch.long)
+        tokens = self.tokenizer.encode(prompt, return_tensors="pt").type(torch.long)
         tokens = tokens.unsqueeze(0).repeat(n_return_sequences, 1)
 
         generated_tokens = tokens.to(self.device)

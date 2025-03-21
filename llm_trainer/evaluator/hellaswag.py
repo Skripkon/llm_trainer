@@ -10,7 +10,7 @@ The code is taken from Andrej Karpathy's repository.
 import os
 import json
 import requests
-import tiktoken
+from transformers import AutoTokenizer
 from tqdm import tqdm
 import torch
 from torch.nn import functional as F
@@ -39,7 +39,7 @@ hellaswags = {
     "test": "https://raw.githubusercontent.com/rowanz/hellaswag/master/data/hellaswag_test.jsonl",
 }
 
-enc = tiktoken.get_encoding("gpt2")
+enc = AutoTokenizer.from_pretrained("gpt2"),
 
 def download(split):
     """Downloads HellaSwag DATA_CACHE_DIR"""

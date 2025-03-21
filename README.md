@@ -87,7 +87,7 @@ You need to create an `LLMTrainer` object and call `.train()` on it. Read about 
 model:        torch.nn.Module = None,                      # The neural network model to train  
 optimizer:    torch.optim.Optimizer = None,                # Optimizer responsible for updating model weights  
 scheduler:    torch.optim.lr_scheduler.LRScheduler = None, # Learning rate scheduler for dynamic adjustment
-tokenizer:    tiktoken.Encoding = None                     # Tokenizer for generating text (used if verbose > 0 during training)
+tokenizer:    PreTrainedTokenizer | AutoTokenizer = None   # Tokenizer for generating text (used if verbose > 0 during training)
 model_returns_logits: bool = False                         # Whether model(X) returns logits or an object with an attribute `logits`
 ```
 

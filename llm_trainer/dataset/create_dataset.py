@@ -1,9 +1,12 @@
+# TODO: get rid of code repetition (write one function used in `create_dataset` and `create_dataset_from_json`)
+
+
 import os
 import json
 from typing import Literal
 
 import numpy as np
-import tiktoken
+from transformers import PreTrainedTokenizer, AutoTokenizer
 from datasets import load_dataset
 from tqdm import tqdm
 
@@ -11,7 +14,7 @@ def create_dataset(save_dir: str = "data",
                    dataset: str = Literal["fineweb-edu-10B"],
                    chunks_limit: int = 1_500,
                    chunk_size=int(1e6),
-                   tokenizer: tiktoken.Encoding = tiktoken.get_encoding("gpt2"),
+                   tokenizer: PreTrainedTokenizer | AutoTokenizer = AutoTokenizer.from_pretrained("gpt2"),
                    end_of_text_token: int = 50256) -> None:
     """
     Creates a tokenized dataset from a Hugging Face dataset and stores it in chunks.
@@ -25,7 +28,7 @@ def create_dataset(save_dir: str = "data",
             Maximum number of chunks to store.
         chunk_size (int):
             Number of tokens per chunk.
-        tokenizer (tiktoken.Encoding):
+        tokenizer (PreTrainedTokenizer | AutoTokenizer):
             Which tokenizer to use to prepare a dataset.
         end_of_text_token (int):
             Token id of the end of text token.
@@ -90,7 +93,7 @@ def create_dataset_from_json(save_dir: str = "data",
                              json_dir: str = "json_files",
                              chunks_limit: int = 1_500,
                              chunk_size=int(1e6),
-                             tokenizer: tiktoken.Encoding = tiktoken.get_encoding("gpt2"),
+                             tokenizer: PreTrainedTokenizer | AutoTokenizer = AutoTokenizer.from_pretrained("gpt2"),
                              eot_token: int = 50256) -> None:
     """
     Creates a tokenized dataset from JSON files containing text documents.
@@ -114,7 +117,7 @@ def create_dataset_from_json(save_dir: str = "data",
             Maximum number of chunks to store.
         chunk_size (int):
             Number of tokens per chunk.
-        tokenizer (tiktoken.Encoding):
+        tokenizer (PreTrainedTokenizer | AutoTokenizer):
             Tokenizer to encode text.
         eot_token (int):
             End-of-text token ID.

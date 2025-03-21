@@ -20,3 +20,6 @@ environment.yml
 .venv
 venv
 .env
+
+# Pytest
+.pytest_cache

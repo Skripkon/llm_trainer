@@ -1,7 +1,6 @@
-from llm_trainer import create_dataset, LLMTrainer
 from transformers import GPT2LMHeadModel, GPT2Config
-import pandas as pd
-import matplotlib.pyplot as plt
+
+from llm_trainer import create_dataset, LLMTrainer
 
 def test_gpt2_training():
 

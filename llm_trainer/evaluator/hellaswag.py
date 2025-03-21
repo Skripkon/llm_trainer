@@ -39,7 +39,7 @@ hellaswags = {
     "test": "https://raw.githubusercontent.com/rowanz/hellaswag/master/data/hellaswag_test.jsonl",
 }
 
-enc = AutoTokenizer.from_pretrained("gpt2"),
+enc = AutoTokenizer.from_pretrained("gpt2")
 
 def download(split):
     """Downloads HellaSwag DATA_CACHE_DIR"""

@@ -19,6 +19,7 @@ environment.yml
 .venv
 venv
 .env
+poetry.lock
 
 # Pytest
 .pytest_cache

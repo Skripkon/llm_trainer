@@ -14,13 +14,8 @@ jobs:
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip install build pytest
-    - name: Build package
-      run: |
-        python3 -m build
-    - name: Install package
-      run: |
-        pip install dist/*.whl
+        pip install poetry pytest
+        poetry install
     - name: Run Tests
       run: |
         pytest --doctest-modules --junitxml=report.xml

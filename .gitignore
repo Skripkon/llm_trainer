@@ -6,7 +6,6 @@ logs_training.csv
 
 # Dev files
 for_developers.txt
-setup.py
 PyPI_README.md
 release.sh
 

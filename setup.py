@@ -16,21 +16,18 @@ try:
 except FileNotFoundError:
     print("requirements.txt not found, using default requirements.")
     requirements = [
-        'torch==2.6.0',
-        'numpy==2.2.3',
-        'transformers==4.49.0',
-        'datasets==3.3.2',
-        'tqdm==4.67.1',
-        'matplotlib==3.10.1'
+        'torch>=2.6.0',
+        'numpy>=2.2.3',
+        'transformers>=4.49.0',
+        'datasets>=3.3.2',
+        'tqdm>=4.67.1',
+        'matplotlib>=3.10.1'
     ]
-except IOError as e:
-    print(f"IOError occurred while reading requirements.txt: {e}")
-    requirements = []
 
 setup(
     name='llm_trainer',
     packages=find_packages('.'),
-    version='0.1.22',
+    version='0.1.23',
     license='MIT',
     description='🤖 Train your LLMs with ease and fun .',
     long_description=long_description,

@@ -12,22 +12,22 @@ def test_gpt2_training():
 
     gpt2_config = GPT2Config(
         vocab_size=50257,
-        n_positions=128,
-        n_embd=32,
-        n_layer=4,
-        n_head=4,
+        n_positions=64,
+        n_embd=16,
+        n_layer=2,
+        n_head=2,
     )
 
     gpt2_model = GPT2LMHeadModel(gpt2_config)
     trainer = LLMTrainer(model=gpt2_model)
 
-    trainer.train(max_steps=10,
+    trainer.train(max_steps=5,
                   generate_each_n_steps=3,
                   print_logs_each_n_steps=1,
-                  context_window=128,
+                  context_window=64,
                   data_dir="data",
-                  BATCH_SIZE=32,
-                  MINI_BATCH_SIZE=16,
+                  BATCH_SIZE=16,
+                  MINI_BATCH_SIZE=8,
                   logging_file="logs_training.csv",
                   save_each_n_steps=1_000,
                   save_dir="checkpoints",

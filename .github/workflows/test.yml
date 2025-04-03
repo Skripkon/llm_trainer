@@ -18,11 +18,11 @@ jobs:
     #     pip install -r requirements.txt
     - name: Build package
       run: |
-        pip install setuptools wheel
+        pip install setuptools wheel pytest
         python3 setup.py sdist bdist_wheel
     - name: Install package
       run: |
         pip install dist/*.whl
-    # - name: Run Tests
-    #   run: |
-    #     pytest --doctest-modules --junitxml=report.xml
+    - name: Run Tests
+      run: |
+        pytest --doctest-modules --junitxml=report.xml

@@ -3,12 +3,25 @@ from setuptools import setup, find_packages
 
 # Add description from README.md
 current_directory = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(current_directory, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+try:
+    with open(os.path.join(current_directory, 'README.md'), encoding='utf-8') as f:
+        long_description = f.read()
+except Exception:
+    pass
 
 # Parse requirements from requirements.txt
-with open(os.path.join(current_directory, 'requirements.txt'), encoding='utf-8') as f:
-    requirements = f.read().splitlines()
+try:
+    with open(os.path.join(current_directory, 'requirements.txt'), encoding='utf-8') as f:
+        requirements = f.read().splitlines()
+except Exception:
+    print("Exception occurred during parsing requirements.txt")
+    requirements = [
+        'torch==2.6.0',
+        'numpy==2.2.3',
+        'tiktoken==0.9.0',
+        'datasets==3.3.2',
+        'tqdm==4.67.1',
+    ]
 
 setup(
     name='llm_trainer',

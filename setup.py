@@ -6,22 +6,26 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 try:
     with open(os.path.join(current_directory, 'README.md'), encoding='utf-8') as f:
         long_description = f.read()
-except Exception:
-    pass
+except FileNotFoundError:
+    long_description = ""
 
 # Parse requirements from requirements.txt
 try:
     with open(os.path.join(current_directory, 'requirements.txt'), encoding='utf-8') as f:
         requirements = f.read().splitlines()
-except Exception:
-    print("Exception occurred during parsing requirements.txt")
+except FileNotFoundError:
+    print("requirements.txt not found, using default requirements.")
     requirements = [
         'torch==2.6.0',
         'numpy==2.2.3',
-        'tiktoken==0.9.0',
+        'transformers==4.49.0',
         'datasets==3.3.2',
         'tqdm==4.67.1',
+        'matplotlib==3.10.1'
     ]
+except IOError as e:
+    print(f"IOError occurred while reading requirements.txt: {e}")
+    requirements = []
 
 setup(
     name='llm_trainer',

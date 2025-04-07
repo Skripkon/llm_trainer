@@ -18,19 +18,20 @@ class Evaluator:
                  model: torch.nn.Module = None,
                  tokenizer: PreTrainedTokenizer | AutoTokenizer = None,
                  dataset: Literal["hellaswag"] = "hellaswag",
-                 verbose: bool = True,
+                 verbose: int = 1000,
                  return_logits: bool = True) -> None:
         """
         Evaluates a provided LLM on a specified benchmark.
         
         Args:
-            model (object): The LLM model to evaluate. This should be a model object that
+            model (torch.nn.Module): The LLM model to evaluate. This should be a model object that
                 can perform forward passes and return logits or predictions.
-            dataset (Literal["hellaswag"], optional): The benchmark dataset to evaluate on.
+            tokenizer (PreTrainedTokenizer | AutoTokenizer): The tokenizer to use.
+            dataset (Literal["hellaswag"]): The benchmark dataset to evaluate on.
                 Currently only supports "hellaswag". Defaults to "hellaswag".
-            verbose (bool, optional): Whether to print detailed evaluation progress and results.
-                Defaults to True.
-            return_logits (bool, optional): Whether the model's forward pass returns raw logits
+            verbose (bool): How often to print detailed evaluation progress and results.
+                Defaults to 1_000.
+            return_logits (bool): Whether the model's forward pass returns raw logits
                 or an object with a 'logits' attribute. Defaults to True.
             
         Raises:

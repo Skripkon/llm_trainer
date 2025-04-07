@@ -45,7 +45,7 @@ def render_example(example, tokenizer) -> tuple[torch.Tensor, torch.Tensor, int]
 @torch.no_grad()
 def evaluate_hellaswag(model: torch.nn.Module = None,
                        tokenizer: PreTrainedTokenizer | AutoTokenizer = None,
-                       verbose: bool = True,
+                       verbose: int = 1_000,
                        return_logits: bool = True):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
@@ -89,7 +89,7 @@ def evaluate_hellaswag(model: torch.nn.Module = None,
         num_total += 1
         num_correct += int(pred == label)
         num_correct_norm += int(pred_norm == label)
-        if verbose:
+        if verbose > 0 and num_total % verbose == 0:
             print(f"{num_total} acc_norm: {num_correct_norm}/{num_total}={num_correct_norm/num_total:.4f}")
         
     print(f"{num_total} acc_norm: {num_correct_norm}/{num_total}={num_correct_norm/num_total:.4f}")

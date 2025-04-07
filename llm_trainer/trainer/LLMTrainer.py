@@ -28,16 +28,16 @@ class LLMTrainer:
             model (torch.nn.Module): 
                 The neural network model to be trained. Must be specified.
             
-            optimizer (torch.optim.Optimizer, optional): 
+            optimizer (torch.optim.Optimizer): 
                 The optimizer used for training. If not provided, AdamW with weight decay and fused optimization is used.
             
-            scheduler (torch.optim.lr_scheduler.LRScheduler, optional): 
+            scheduler (torch.optim.lr_scheduler.LRScheduler): 
                 The learning rate scheduler. If not provided, a cosine annealing scheduler with warmup steps is used.
             
-            tokenizer (transformers.PreTrainedTokenizer, optional): 
+            tokenizer (transformers.PreTrainedTokenizer): 
                 The tokenizer used to encode and decode text. Defaults to GPT-2 tokenizer.
             
-            model_returns_logits (bool, optional): 
+            model_returns_logits (bool): 
                 Whether the model returns raw logits (`logits = model(X)`) or an object containing logits
                 (`logits = model(X).logits`). Defaults to False.
         

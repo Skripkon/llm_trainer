@@ -1,6 +1,6 @@
 [project]
 name = "llm-trainer"
-version = "0.1.25"
+version = "1.0.0"
 description = "🤖 Train your LLMs with ease and fun."
 authors = [
     {name = "Nikoláy Skripkó"}

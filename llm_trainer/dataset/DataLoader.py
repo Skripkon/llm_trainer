@@ -8,7 +8,7 @@ class DataLoader:
         Parameters:
             batch_size (int): Batch size
             context_window (int): Context window
-            data_dir (str, optional): A directory with .npy files. Each file must contain tokens.
+            data_dir (str): A directory with .npy files. Each file must contain tokens.
         """
         self.batch_size = batch_size
         self.context_window = context_window

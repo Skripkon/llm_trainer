@@ -23,7 +23,7 @@ class LLMTrainer:
 
         """
         Initializes an LLMTrainer instance.
-
+        ------
         Parameters:
             model (torch.nn.Module): 
                 The neural network model to be trained. Must be specified.
@@ -258,7 +258,6 @@ class LLMTrainer:
         self.model.load_state_dict(new_state_dict)
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         self.train_loader: DataLoader = checkpoint["train_loader"]
-        # print(f"Starting from chunk: {self.train_loader.current_chunk}")
 
         self.current_step = checkpoint['step']  # Resume from the last step
 

@@ -4,6 +4,7 @@ import torch
 from transformers import PreTrainedTokenizer, AutoTokenizer
 
 from llm_trainer.evaluator.hellaswag import evaluate_hellaswag
+from llm_trainer.evaluator.lambada import evaluate_lambada
 
 class Evaluator:
     """
@@ -14,34 +15,43 @@ class Evaluator:
     in the future.
     """
 
-    def evaluate(self,
+    def eval_hellaswag(self,
                  model: torch.nn.Module = None,
                  tokenizer: PreTrainedTokenizer | AutoTokenizer = None,
-                 dataset: Literal["hellaswag"] = "hellaswag",
                  verbose: int = 1000,
                  return_logits: bool = True) -> None:
         """
-        Evaluates a provided LLM on a specified benchmark.
+        Evaluates a provided LLM on the HellaSwag benchmark.
         
         Args:
-            model (torch.nn.Module): The LLM model to evaluate. This should be a model object that
-                can perform forward passes and return logits or predictions.
-            tokenizer (PreTrainedTokenizer | AutoTokenizer): The tokenizer to use.
-            dataset (Literal["hellaswag"]): The benchmark dataset to evaluate on.
-                Currently only supports "hellaswag". Defaults to "hellaswag".
-            verbose (bool): How often to print detailed evaluation progress and results.
-                Defaults to 1_000.
-            return_logits (bool): Whether the model's forward pass returns raw logits
-                or an object with a 'logits' attribute. Defaults to True.
-            
-        Raises:
-            ValueError: If an unsupported benchmark dataset is specified.
+            model (torch.nn.Module): The LLM model to evaluate. Must be capable of autoregressive
+                language modeling.
+            tokenizer (PreTrainedTokenizer | AutoTokenizer): The tokenizer compatible with the model.
+            verbose (int): Frequency of progress reporting. Defaults to 1,000.
+            return_logits (bool): Whether the model returns raw logits or a wrapper containing logits.
+                Defaults to True.
         """
-        match dataset:
-            case "hellaswag":
-                evaluate_hellaswag(model=model,
-                                   tokenizer=tokenizer,
-                                   verbose=verbose,
-                                   return_logits=return_logits)
-            case _:
-                raise ValueError("Unknown benchmark.")
+        evaluate_hellaswag(model=model, tokenizer=tokenizer, verbose=verbose, return_logits=return_logits)
+
+    def eval_lambada(self,
+                 model: torch.nn.Module = None,
+                 tokenizer: PreTrainedTokenizer | AutoTokenizer = None,
+                 verbose: int = 1000,
+                 return_logits: bool = True,
+                 max_length: int = 1024,
+                 stride: int = 512) -> None:
+        """
+        Evaluates a provided LLM on the LAMBADA benchmark.
+
+        Args:
+            model (torch.nn.Module): The LLM model to evaluate. Must be capable of autoregressive
+                language modeling.
+            tokenizer (PreTrainedTokenizer | AutoTokenizer): The tokenizer compatible with the model.
+            verbose (int): Frequency of progress reporting. Defaults to 1,000.
+            return_logits (bool): Whether the model returns raw logits or a wrapper containing logits.
+                Defaults to True.
+            max_length (int): Maximum input sequence length for evaluation. Defaults to 1024.
+            stride (int): The stride used when splitting text into overlapping chunks. Helps with
+                handling long contexts. Defaults to 512.
+        """
+        evaluate_lambada(model=model, tokenizer=tokenizer, verbose=verbose, return_logits=return_logits, max_length=max_length, stride=stride)

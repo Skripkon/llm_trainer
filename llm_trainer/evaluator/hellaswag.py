@@ -11,6 +11,7 @@ from datasets import load_dataset
 import torch
 from torch.nn import functional as F
 from transformers import PreTrainedTokenizer, AutoTokenizer
+from accelerate.test_utils.testing import get_backend
 
 
 def render_example(example, tokenizer) -> tuple[torch.Tensor, torch.Tensor, int]:
@@ -47,7 +48,8 @@ def evaluate_hellaswag(model: torch.nn.Module = None,
                        tokenizer: PreTrainedTokenizer | AutoTokenizer = None,
                        verbose: int = 1_000,
                        return_logits: bool = True):
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    device, _, _ = get_backend() # automatically detects the underlying device type (CUDA, CPU, XPU, MPS, etc.)
     model.to(device)
 
     torch.set_float32_matmul_precision('high') # use tf32

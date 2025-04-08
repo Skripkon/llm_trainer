@@ -4,11 +4,12 @@ import time
 import math
 import sys
 
+from accelerate.test_utils.testing import get_backend
+import matplotlib.pyplot as plt
+import pandas as pd
 import torch
 from torch.optim.lr_scheduler import LRScheduler
 from torch.nn import functional as F
-import pandas as pd
-import matplotlib.pyplot as plt
 from transformers import PreTrainedTokenizer, AutoTokenizer
 
 from llm_trainer.dataset.DataLoader import DataLoader
@@ -45,11 +46,8 @@ class LLMTrainer:
             ValueError: If no model is provided.
         """
 
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        if self.device == "cuda":
-            print(f"Training on device: CUDA, {torch.cuda.get_device_name()}")
-        else:
-            print("Training on device: CPU")
+        self.device, _, _ = get_backend() # automatically detects the underlying device type (CUDA, CPU, XPU, MPS, etc.)
+        print(f"Training on: {self.device}")
 
         if optimizer is None:
             optimizer = self._configure_optimizer(weight_decay=0.1, learning_rate=5e-3, model=model)

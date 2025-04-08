@@ -1,5 +1,3 @@
-from typing import Literal
-
 import torch
 from transformers import PreTrainedTokenizer, AutoTokenizer
 

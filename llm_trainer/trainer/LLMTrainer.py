@@ -15,6 +15,26 @@ from transformers import PreTrainedTokenizer, AutoTokenizer
 from llm_trainer.dataset.DataLoader import DataLoader
 
 class LLMTrainer:
+    """
+    A trainer class for fine-tuning and training Large Language Models (LLMs).
+    
+    This class provides a comprehensive training pipeline for LLMs, including:
+    - Gradient accumulation for handling large batch sizes
+    - Automatic mixed precision training
+    - Learning rate scheduling with warmup
+    - Checkpointing and resuming training
+    - Text generation during training
+    - Training metrics logging
+    
+    The trainer supports any PyTorch model that takes input tensors of shape (batch_size, context_window)
+    and returns logits during the forward pass.
+    
+    Example:
+        >>> model = YourLLMModel()
+        >>> trainer = LLMTrainer(model=model)
+        >>> trainer.train()
+    """
+
     def __init__(self,
                  model: torch.nn.Module = None,
                  optimizer: torch.optim.Optimizer = None,
@@ -87,33 +107,59 @@ class LLMTrainer:
               overwrite_logging_file: bool = True) -> None:
         """
         Train the model with the specified parameters.
-        ------
+        
+        This method implements the main training loop with the following features:
+        - Gradient accumulation to handle large effective batch sizes
+        - Automatic mixed precision training using bfloat16
+        - Learning rate scheduling with warmup
+        - Regular checkpointing and logging
+        - Text generation samples during training
+        - Performance metrics tracking (tokens/sec, loss, etc.)
+        
         Parameters:
             max_steps (int):
-                The maximum number of training steps.
+                The maximum number of training steps to perform.
             save_each_n_steps (int):
                 The interval of steps at which to save model checkpoints.
-            print_logs_each_n_steps(int):
-                The interval of steps at which to print training logs.
+            print_logs_each_n_steps (int):
+                The interval of steps at which to print training logs to console.
             BATCH_SIZE (int):
-                The total batch size for training.
+                The total effective batch size for training. This is achieved through
+                gradient accumulation over multiple mini-batches.
             MINI_BATCH_SIZE (int):
-                The mini-batch size for gradient accumulation.
+                The actual mini-batch size processed in each forward pass. Must be
+                a divisor of BATCH_SIZE.
             context_window (int):
-                The context window size for the data loader.
+                The context window size for the data loader. This determines the
+                maximum sequence length the model can process.
             data_dir (str):
-                The directory containing the training data.
+                The directory containing the training data in .npy format.
             logging_file (str):
-                The file path for logging training metrics.
+                The file path for logging training metrics in CSV format.
             generate_each_n_steps (int):
-                The interval of steps at which to generate and print text samples.
+                The interval of steps at which to generate and print text samples
+                using the current model state.
             prompt (str):
-                Beginning of the sentence that the model will continue (during generation).
+                The initial text prompt used for generation during training.
             save_dir (str):
-                The directory to save model checkpoints.
+                The directory where model checkpoints will be saved.
             overwrite_logging_file (bool):
-                If logging file should be overwritten in case it exists. True by default,
-                set to False if you continue training.
+                Whether to overwrite the logging file if it exists. Set to False
+                when continuing training from a checkpoint.
+                
+        Note:
+            The training process uses gradient accumulation to achieve the effective
+            BATCH_SIZE. The number of accumulation steps is calculated as
+            BATCH_SIZE // MINI_BATCH_SIZE.
+            
+        Example:
+            >>> trainer = LLMTrainer(model=model)
+            >>> trainer.train(
+            ...     max_steps=10000,
+            ...     BATCH_SIZE=512,
+            ...     MINI_BATCH_SIZE=32,
+            ...     context_window=1024
+            ... )
         """
 
         # Sets the internal precision of float32 matrix multiplications.
@@ -196,7 +242,35 @@ class LLMTrainer:
 
     def _generate_text(self, prompt: str = "Once upon a time", n_return_sequences: int = 4, length: int = 32) -> None:
         """
-        Samples from the model and prints `n_return_sequences` continuation of the `prompt`.
+        Generate text samples from the model using top-k sampling.
+        
+        This method generates multiple continuations of the given prompt using the current
+        model state. It uses top-k sampling with k=10 for text generation, which helps
+        maintain diversity.
+        
+        Parameters:
+            prompt (str):
+                The initial text prompt to continue. Defaults to "Once upon a time".
+            n_return_sequences (int):
+                The number of different continuations to generate. Defaults to 4.
+            length (int):
+                The total length of each generated sequence (including the prompt).
+                Defaults to 32 tokens.
+                
+        Note:
+            The model is temporarily set to evaluation mode during generation
+            and returned to training mode afterward.
+            
+        Example:
+            >>> trainer._generate_text(
+            ...     prompt="The quick brown fox",
+            ...     n_return_sequences=2,
+            ...     length=50
+            ... )
+            === sample 0 ===
+            The quick brown fox jumps over the lazy dog...
+            === sample 1 ===
+            The quick brown fox runs through the forest...
         """
 
         # Make sure the model is on the same device
@@ -246,6 +320,29 @@ class LLMTrainer:
         torch.save(checkpoint, f"checkpoints/cp_{step}.pth")
 
     def load_checkpoint(self, checkpoint_path: str) -> None:
+        """
+        Load a model checkpoint and restore the training state.
+        
+        This method loads a previously saved checkpoint and restores:
+        - The model's state dictionary
+        - The optimizer's state dictionary
+        - The training data loader
+        - The current training step
+        
+        Parameters:
+            checkpoint_path (str):
+                Path to the checkpoint file (.pth) to load.
+                
+        Note:
+            If the model was saved after running `torch.compile`, the method
+            automatically handles the layer name changes by removing the
+            "_orig_mod." prefix from the state dictionary keys.
+            
+        Example:
+            >>> trainer = LLMTrainer(model=model)
+            >>> trainer.load_checkpoint("checkpoints/cp_1000.pth")
+            >>> trainer.train()  # Continues training from step 1000
+        """
 
         checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
 
@@ -277,6 +374,33 @@ class LLMTrainer:
         return optimizer
 
     def plot_loss(self, logging_file: str = "logs_training.csv", smoothing_window: int = 10):
+        """
+        Visualize the training loss over time with optional smoothing.
+        
+        This method creates a plot showing both the raw and smoothed training loss
+        curves. The smoothed curve helps visualize the overall trend by reducing
+        noise. The plot also includes horizontal reference lines at common loss
+        values to help assess model performance.
+        
+        Parameters:
+            logging_file (str):
+                Path to the CSV file containing training logs. Defaults to
+                "logs_training.csv".
+            smoothing_window (int):
+                Size of the rolling window used for smoothing the loss curve.
+                Larger values result in smoother curves but may obscure short-term
+                trends. Defaults to 10.
+                
+        Note:
+            The plot includes reference lines at loss values of 3, 4, 5, and 6
+            to help gauge model performance.
+            
+        Example:
+            >>> trainer.plot_loss(
+            ...     logging_file="training_logs.csv",
+            ...     smoothing_window=20
+            ... )
+        """
 
         data = pd.read_csv(logging_file)
         smoothed_loss = data["Loss"].rolling(window=smoothing_window).mean()

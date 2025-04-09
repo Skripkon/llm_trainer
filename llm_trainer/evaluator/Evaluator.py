@@ -1,5 +1,5 @@
 import logging
-from typing import TypedDict, Optional
+from typing import TypedDict
 
 from accelerate.test_utils.testing import get_backend
 from datasets import load_dataset
@@ -11,7 +11,7 @@ from transformers import PreTrainedTokenizer, AutoTokenizer
 
 class DatasetConfig(TypedDict):
     name: str
-    config_name: Optional[str]
+    config_name: str | None
     text_key: str  # The key in the dataset that contains the text to evaluate
 
 class Evaluator:
@@ -213,7 +213,7 @@ class Evaluator:
         )
 
     @torch.no_grad()
-    def _compute_perplexity(self, hf_dataset: str, config_name: Optional[str], text_key: str,
+    def _compute_perplexity(self, hf_dataset: str, config_name: str | None, text_key: str,
                            model: torch.nn.Module, tokenizer: PreTrainedTokenizer | AutoTokenizer,
                            verbose: int = 100, return_logits: bool = False,
                            max_length: int = 1024, stride: int = 512) -> float:
@@ -305,15 +305,13 @@ class Evaluator:
 
     @torch.no_grad()
     def eval_all(self, model: torch.nn.Module, tokenizer: PreTrainedTokenizer | AutoTokenizer,
-                return_logits: bool = False,
-                max_length: int = 1024, stride: int = 512):
+                return_logits: bool = False, max_length: int = 1024, stride: int = 512):
         """
         Evaluates the model on all available benchmarks and prints a summary table.
         
         Args:
             model (torch.nn.Module): The LLM model to evaluate
             tokenizer (PreTrainedTokenizer | AutoTokenizer): The tokenizer compatible with the model
-            verbose (int): Frequency of progress reporting
             return_logits (bool): Whether the model returns raw logits or a wrapper containing logits
             max_length (int): Maximum input sequence length for evaluation
             stride (int): The stride used when splitting text into overlapping chunks

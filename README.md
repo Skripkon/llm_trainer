@@ -14,6 +14,18 @@
     </a>
 </div>
 
+## Table of Contents
+- [Quick Start](#llm_trainer-in-5-lines-of-code)
+- [Installation](#installation)
+- [Data Preparation](#how-to-prepare-data)
+  - [Option 1: Default FineWeb Dataset](#option-1-use-the-default-fineweb-dataset)
+  - [Option 2: Custom Data](#option-2-use-your-own-data)
+- [Model Requirements](#which-models-are-valid)
+- [Training Guide](#how-to-start-training)
+  - [LLMTrainer Parameters](#llmtrainer-parameters)
+  - [Training Parameters](#llmtrainertrain-parameters)
+- [Contributing](#to-contribute-instructions-for-linux)
+
 # `llm_trainer` in 5 Lines of Code
 
 ```python
@@ -112,14 +124,26 @@ You must specify only the `model`. The other attributes are optional and will be
 
 Every parameter has a default value, so you can start training simply by calling `LLMTrainer.train()`.
 
-# To contribute
+# To contribute (instructions for Linux)
 
 1. Fork the repository.
-2. Make changes.
-3. Apply linter.
+2. Set up environment:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install poetry
+poetry install
+```
+3. Make changes
+4. Apply linter
 ```
 $ pip install pylint==3.3.5
 $ pylint $(git ls-files '*.py')
 ```
-4. Commit and push your changes.
-5. Create a pull request from your fork to the main repository.
+5. Run tests locally
+```bash
+pip install pytest
+poetry run pytest
+```
+6. Commit and push your changes
+7. Create a pull request from your fork to the main repository

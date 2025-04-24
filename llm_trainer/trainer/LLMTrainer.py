@@ -232,7 +232,7 @@ class LLMTrainer:
 
             # Sample from the model
             if ((step > 0 and step % generate_each_n_steps == 0) or last_step):
-                self._generate_text(prompt=prompt)
+                self.generate_text(prompt=prompt)
                 self.model.train()  # during generation model is set to .eval() mode
 
             # Save the model (checkpoint)
@@ -240,29 +240,34 @@ class LLMTrainer:
                 self._save_checkpoint(step, self.train_loader, save_dir)
 
 
-    def _generate_text(self, prompt: str = "Once upon a time", n_return_sequences: int = 4, length: int = 32) -> None:
+    def generate_text(self, prompt: str = "Once upon a time", n_return_sequences: int = 4, length: int = 32) -> None:
         """
         Generate text samples from the model using top-k sampling.
-        
+
         This method generates multiple continuations of the given prompt using the current
         model state. It uses top-k sampling with k=10 for text generation, which helps
-        maintain diversity.
-        
+        maintain diversity in the generated outputs.
+
         Parameters:
-            prompt (str):
+            prompt (str, optional):
                 The initial text prompt to continue. Defaults to "Once upon a time".
-            n_return_sequences (int):
+            n_return_sequences (int, optional):
                 The number of different continuations to generate. Defaults to 4.
-            length (int):
+            length (int, optional):
                 The total length of each generated sequence (including the prompt).
                 Defaults to 32 tokens.
-                
-        Note:
-            The model is temporarily set to evaluation mode during generation
-            and returned to training mode afterward.
-            
+
+        Returns:
+            List[str]: A list of generated text continuations.
+
+        Notes:
+            - The model is temporarily set to evaluation mode during generation
+              and returned to training mode afterward.
+            - Top-k sampling is used to select the next token, ensuring diversity
+              in the generated sequences.
+
         Example:
-            >>> trainer._generate_text(
+            >>> trainer.generate_text(
             ...     prompt="The quick brown fox",
             ...     n_return_sequences=2,
             ...     length=50
@@ -304,10 +309,13 @@ class LLMTrainer:
                 generated_tokens = torch.cat((generated_tokens, next_tokens), dim=1)
 
         # print the generated text
+        continuations = []
         for i in range(n_return_sequences):
             tokens = generated_tokens[i, :length].tolist()
             decoded = self.tokenizer.decode(tokens)
             print(f"=== sample {i} ===\n{decoded}")
+            continuations.append(decoded)
+        return continuations
 
     def _save_checkpoint(self, step: int, train_loader: DataLoader, save_dir: str = "checkpoints") -> None:
 

@@ -237,7 +237,7 @@ class LLMTrainer:
 
             # Save the model (checkpoint)
             if last_step or ((step > 0) and ((step % save_each_n_steps) == 0)):
-                self._save_checkpoint(step, self.train_loader)
+                self._save_checkpoint(step, self.train_loader, save_dir)
 
 
     def _generate_text(self, prompt: str = "Once upon a time", n_return_sequences: int = 4, length: int = 32) -> None:
@@ -309,7 +309,7 @@ class LLMTrainer:
             decoded = self.tokenizer.decode(tokens)
             print(f"=== sample {i} ===\n{decoded}")
 
-    def _save_checkpoint(self, step: int, train_loader: DataLoader) -> None:
+    def _save_checkpoint(self, step: int, train_loader: DataLoader, save_dir: str = "checkpoints") -> None:
 
         checkpoint = {
                     'model_state_dict': self.model.state_dict(),
@@ -317,7 +317,7 @@ class LLMTrainer:
                     'step': step,
                     'train_loader': train_loader
                     }
-        torch.save(checkpoint, f"checkpoints/cp_{step}.pth")
+        torch.save(checkpoint, f"{save_dir}/cp_{step}.pth")
 
     def load_checkpoint(self, checkpoint_path: str) -> None:
         """
@@ -349,7 +349,7 @@ class LLMTrainer:
         # If the model was saved after running `torch.compile` then the names of its layers were changed.
         # Need to change it back.
         new_state_dict = {k.replace("_orig_mod.", ""): v for k, v in checkpoint['model_state_dict'].items()}
-    
+        self.model.to(self.device)
         self.model.load_state_dict(new_state_dict)
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         self.train_loader: DataLoader = checkpoint["train_loader"]
